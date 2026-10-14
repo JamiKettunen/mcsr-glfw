@@ -1,4 +1,4 @@
-name: waywall glfw 3.4
+name: waywall glfw 3.5.1
 on: workflow_dispatch
 
 jobs:
