@@ -1,0 +1,29 @@
+name: waywall glfw 3.4
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install deps
+        run: |
+          sudo apt update
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libwayland-dev libxkbcommon-dev
+
+      - name: build
+        run: |
+          git clone https://github.com/glfw/glfw
+          cd glfw
+          git checkout 3.5.1
+
+          curl -o glfw.patch https://raw.githubusercontent.com/tesselslate/waywall/ad569de1ddae6b034c7095795a42f044746a55a7/contrib/glfw.patch
+          git apply glfw.patch
+
+          cmake -S . -B build -DBUILD_SHARED_LIBS=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF -DGLFW_INSTALL=OFF
+          cd build
+          make
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: glfw/build/src/libglfw.so
