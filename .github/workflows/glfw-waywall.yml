@@ -3,10 +3,16 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
         glfw_version: [3.4, 3.5.1]
+        arch: [x64, arm64]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: install deps
         run: |
@@ -29,4 +35,5 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@v7
         with:
+          name: ${{ matrix.glfw_version }}-${{ matrix.arch }}-artifact
           path: glfw/build/src/libglfw.so
