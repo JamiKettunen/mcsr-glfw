@@ -1,9 +1,12 @@
-name: glfw 3.4 waywall
+name: glfw waywall
 on: workflow_dispatch
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        glfw_version: [3.4, 3.5.1]
     steps:
       - name: install deps
         run: |
@@ -14,7 +17,7 @@ jobs:
         run: |
           git clone https://github.com/glfw/glfw
           cd glfw
-          git checkout 3.4
+          git checkout ${{ matrix.glfw_version }}
 
           curl -o glfw.patch https://raw.githubusercontent.com/tesselslate/waywall/ad569de1ddae6b034c7095795a42f044746a55a7/contrib/glfw.patch
           git apply glfw.patch
