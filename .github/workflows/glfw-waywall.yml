@@ -1,4 +1,5 @@
-name: glfw waywall
+name: Build GLFW 3.4/3.5.1 for x86_64/arm64 waywall
+
 on: workflow_dispatch
 
 jobs:
@@ -7,9 +8,9 @@ jobs:
     strategy:
       matrix:
         glfw_version: [3.4, 3.5.1]
-        arch: [x64, arm64]
+        arch: [x86_64, arm64]
         include:
-          - arch: x64
+          - arch: x86_64
             runner: ubuntu-24.04
           - arch: arm64
             runner: ubuntu-24.04-arm
@@ -18,7 +19,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libwayland-dev libxkbcommon-dev
-
       - name: build
         run: |
           git clone https://github.com/glfw/glfw
@@ -31,9 +31,9 @@ jobs:
           cmake -S . -B build -DBUILD_SHARED_LIBS=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF -DGLFW_INSTALL=OFF
           cd build
           make
-
+          mv src/libglfw.so src/libglfw-${{ matrix.arch }}.so.${{ matrix.glfw_version }}
       - name: upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.glfw_version }}-${{ matrix.arch }}-artifact
-          path: glfw/build/src/libglfw.so
+          path: glfw/build/src/libglfw-${{ matrix.arch }}.so.${{ matrix.glfw_version }}
+          archive: false
